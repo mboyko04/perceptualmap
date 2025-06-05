@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Perceptual Map Builder</title>
+  <title>Perceptual Map Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { background: #f4f4f9; font-family: sans-serif; }
@@ -55,7 +55,8 @@
   <button id="download-btn">Download Chart</button>
   <div class="map-area">
     <div class="svg-container">
-      <canvas id="perceptual-map" width="420" height="420" style="display:block; background:#f1f5f9; border: 2px solid #000; border-radius: 10px;"></canvas>
+      <!-- Updated width/height and style for retina resolution -->
+      <canvas id="perceptual-map" width="840" height="840" style="width:420px; height:420px; display:block; background:#f1f5f9; border: 2px solid #000; border-radius: 10px;"></canvas>
     </div>
     <div class="controls" id="brand-controls">
       <p style="color:#7e7e7e;">Add a point to get started!</p>
@@ -77,6 +78,9 @@ const brands = [];
 const CANVAS_SIZE = 320, margin = 60;
 const canvas = document.getElementById('perceptual-map');
 const ctx = canvas.getContext('2d');
+// Retina scaling for higher resolution
+ctx.setTransform(2, 0, 0, 2, 0, 0);
+
 const controls = document.getElementById('brand-controls');
 
 function renderMap() {
