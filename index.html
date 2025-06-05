@@ -37,7 +37,7 @@
     <input id="brand-x" type="number" min="0" max="100" value="50" style="width:60px;">
     <input id="brand-y" type="number" min="0" max="100" value="50" style="width:60px;">
     <input id="brand-color" type="color" value="#2563eb" style="width:44px; padding:0;">
-    <button type="submit">Add</button>
+    <button type="submit">Add Point</button>
   </form>
   <button id="download-btn">Download Chart</button>
   <div class="map-area">
@@ -154,7 +154,7 @@ function renderMap() {
 
 function renderControls() {
   if (brands.length === 0) {
-    controls.innerHTML = '<p style="color:#7e7e7e;">Add a brand to get started!</p>';
+    controls.innerHTML = '<p style="color:#7e7e7e;">Add a point to get started!</p>';
     return;
   }
   controls.innerHTML = '';
