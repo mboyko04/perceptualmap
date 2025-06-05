@@ -19,6 +19,19 @@
     .controls { flex: 1; }
     .brand-box { background: #f9fafb; border: 1px solid #eee; padding: 12px; border-radius: 10px; margin-bottom: 18px;}
     .svg-container { position: relative; }
+    .delete-btn {
+      background: #f87171;
+      color: #fff;
+      padding: 5px 14px;
+      border: none;
+      border-radius: 5px;
+      margin-top: 5px;
+      margin-left: 2px;
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: background 0.2s;
+    }
+    .delete-btn:hover { background: #dc2626; }
     #download-btn { margin: 12px 0 0 0; display: block; }
     @media (max-width: 900px) { .map-area { flex-direction: column; gap: 10px; } }
   </style>
@@ -33,7 +46,7 @@
     <input id="y-axis" type="text" value="Quality">
   </div>
   <form id="brand-form" autocomplete="off" style="margin-top:18px; display:flex; gap:12px; flex-wrap: wrap;">
-    <input id="brand-name" type="text" placeholder="Brand Name" style="flex:1; min-width: 110px;">
+    <input id="brand-name" type="text" placeholder="Name" style="flex:1; min-width: 110px;">
     <input id="brand-x" type="number" min="0" max="100" value="50" style="width:60px;">
     <input id="brand-y" type="number" min="0" max="100" value="50" style="width:60px;">
     <input id="brand-color" type="color" value="#2563eb" style="width:44px; padding:0;">
@@ -45,10 +58,20 @@
       <canvas id="perceptual-map" width="420" height="420" style="display:block; background:#f1f5f9; border: 2px solid #000; border-radius: 10px;"></canvas>
     </div>
     <div class="controls" id="brand-controls">
-      <p style="color:#7e7e7e;">Add a brand to get started!</p>
+      <p style="color:#7e7e7e;">Add a point to get started!</p>
     </div>
   </div>
 </div>
+<footer style="
+  margin-top: 36px;
+  text-align: center;
+  color: #6c757d;
+  font-size: 1.05em;
+  letter-spacing: 1px;
+  padding-bottom: 14px;
+  ">
+  Matthew Boyko - 2025
+</footer>
 <script>
 const brands = [];
 const CANVAS_SIZE = 320, margin = 60;
@@ -115,12 +138,12 @@ function renderMap() {
   ctx.fillText("Low", margin - 30, margin + CANVAS_SIZE - 8);
   ctx.fillText("High", margin - 28, margin + 18);
 
-  // Axis Labels **closer to the chart, right beside axes**
-  // X-axis label (bold, centered, just below axis, close to box)
+  // Axis Labels closer to the chart, right beside axes
   ctx.font = "bold 20px sans-serif";
   ctx.textAlign = "center";
+  // X-axis label
   ctx.fillText(xLabel, margin + CANVAS_SIZE/2, margin + CANVAS_SIZE + 30);
-  // Y-axis label (bold, rotated, centered, just left of axis, close to box)
+  // Y-axis label (rotated)
   ctx.save();
   ctx.translate(margin - 25, margin + CANVAS_SIZE/2);
   ctx.rotate(-Math.PI/2);
@@ -170,6 +193,7 @@ function renderControls() {
       <input type="range" min="0" max="100" value="${brand.x}" data-i="${i}" data-field="x">
       <label style="font-size:0.95em;">${document.getElementById('y-axis').value}: <span id="label-y-${i}">${brand.y}</span></label>
       <input type="range" min="0" max="100" value="${brand.y}" data-i="${i}" data-field="y">
+      <button class="delete-btn" data-i="${i}">Delete</button>
     `;
     // Slider events
     brandBox.querySelectorAll('input[type="range"]').forEach(slider => {
@@ -181,6 +205,12 @@ function renderControls() {
         renderMap();
       };
     });
+    // Delete event
+    brandBox.querySelector('.delete-btn').onclick = (e) => {
+      const idx = +e.target.dataset.i;
+      brands.splice(idx, 1);
+      renderMap(); renderControls();
+    };
     controls.appendChild(brandBox);
   });
 }
