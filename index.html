@@ -2,248 +2,431 @@
 <html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-MEPL3JTMKT"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-MEPL3JTMKT');
-</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEPL3JTMKT"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MEPL3JTMKT');
+  </script>
   <meta charset="UTF-8">
   <title>Perceptual Map Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { background: #f4f4f9; font-family: sans-serif; }
-    .container { max-width: 680px; margin: 32px auto; background: #fff; border-radius: 18px; box-shadow: 0 4px 16px #0001; padding: 2em; }
-    h2 { text-align: center; }
-    label { display: block; margin: 8px 0 4px; font-weight: bold; }
-    input[type="text"], input[type="number"], input[type="color"] {
-      padding: 6px; border-radius: 6px; border: 1px solid #bbb; margin-bottom: 12px; width: 100%;
+    .container { max-width: 960px; margin: 32px auto; background: #fff; border-radius: 18px; box-shadow: 0 4px 16px #0001; padding: 2em; }
+    h2 { text-align: center; font-size: 2.2rem; margin-bottom: 0.35em; }
+    .instructions-btn {
+      display: block;
+      margin: 0 auto 20px auto;
+      text-align: center;
+      color: #2563eb;
+      font-weight: 600;
+      font-size: 1.13rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.15s;
     }
-    input[type="range"] { width: 100%; }
-    button { padding: 8px 18px; background: #2563eb; color: #fff; border: none; border-radius: 7px; cursor: pointer; font-size: 1em; }
-    button:hover { background: #1939a4; }
-    .map-area { margin: 32px 0 0; display: flex; flex-direction: row; gap: 28px;}
-    .controls { flex: 1; }
-    .brand-box { background: #f9fafb; border: 1px solid #eee; padding: 12px; border-radius: 10px; margin-bottom: 18px;}
-    .svg-container { position: relative; }
+    .instructions-btn:hover, .instructions-btn:focus {
+      color: #fff;
+      background: #2563eb;
+      border-radius: 6px;
+      padding: 0 18px;
+    }
+    .inputs-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .inputs-row input[type="text"] {
+      font-size: 1em;
+      padding: 12px;
+      border-radius: 7px;
+      border: 1px solid #bbb;
+      box-sizing: border-box;
+      margin-bottom: 0;
+      height: 46px;
+    }
+    #chart-title { flex: 2 1 0%; min-width: 120px; }
+    #x-axis, #y-axis { flex: 1 1 0%; min-width: 80px; }
+    .add-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .add-row input[type="text"] {
+      flex: 1 1 0%;
+      min-width: 100px;
+      font-size: 1em;
+      padding: 0 12px;           /* Only left/right padding for tall input */
+      border-radius: 7px;
+      border: 1px solid #bbb;
+      height: 46px;              /* Match color picker and button */
+      line-height: 46px;         /* Vertically center text */
+      box-sizing: border-box;
+    }
+    .add-row input[type="color"] {
+      width: 48px; height: 46px; border: none; border-radius: 7px; padding: 0; background: none;
+    }
+    .add-row button {
+      height: 46px;
+      padding: 0 30px;
+      font-size: 1.1em;
+      background: #2563eb;
+      border-radius: 7px;
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .add-row button:hover { background: #1939a4; }
+    .map-area {
+      margin: 32px 0 0;
+      display: flex;
+      flex-direction: row;
+      gap: 28px;
+      align-items: flex-start;
+    }
+    .svg-container {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 380px;
+    }
+    #perceptual-map {
+      display: block;
+      background: #f1f5f9;
+      border: 2px solid #000;
+      border-radius: 10px;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+    }
+    #download-btn {
+      margin-top: 24px;
+      width: 100%;
+      max-width: 420px;
+      display: block;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 13px 0;
+      font-size: 1.13em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    #download-btn:hover { background: #1939a4; }
+    .controls-area {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1 1 0%;
+      min-width: 280px;
+      max-width: 370px;
+    }
+    .market-share-summary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e6edfe;
+      color: #2563eb;
+      font-size: 1.13em;
+      font-weight: 700;
+      border-radius: 14px;
+      padding: 12px 0;
+      margin-bottom: 8px;
+      margin-top: 4px;
+      min-width: 0;
+    }
+    .brand-controls-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .brand-control {
+      background: #f9fafb;
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 2px 7px #e3e5ec7c;
+      padding: 0;
+      overflow: hidden;
+    }
+    .brand-summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 8px 12px 7px 0;
+    }
+    .brand-color-bar {
+      width: 16px;
+      background: var(--color, #2563eb);
+      flex-shrink: 0;
+      align-self: stretch;
+      border-radius: 0;
+      min-height: 40px;
+   }
+    .brand-title-coords {
+      flex: 1 1 0%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.15em;
+      font-weight: bold;
+      word-break: break-word;
+      min-width: 0;
+    }
+    .brand-name {
+      font-size: 1.13em;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 110px;
+      min-width: 0;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 18px;
+    }
+    .brand-coords-share {
+      font-size: 1em;
+      font-weight: bold;
+      white-space: nowrap;
+      margin-left: auto;
+      min-width: 70px;
+      display: inline-block;
+      text-align: right;
+    }
+    .brand-collapse {
+      margin-left: 6px;
+      font-size: 1em;
+      color: #767dbb;
+      user-select: none;
+      transition: transform 0.2s;
+    }
+    .brand-collapse.collapsed {
+      transform: rotate(-90deg);
+    }
+    .brand-details {
+      padding: 7px 18px 10px 18px;
+      border-top: 1px solid #e2e8f0;
+      display: block;
+    }
+    .slider-label {
+      font-weight: 600;
+      font-size: 1em;
+      margin-bottom: 2px;
+      display: block;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      accent-color: #2563eb;
+      height: 2px;
+      margin: 0;
+    }
+    .slider-value {
+      font-size: 1em;
+      min-width: 34px;
+      text-align: right;
+      font-weight: bold;
+      color: #2563eb;
+    }
     .delete-btn {
+      margin-top: 6px;
       background: #f87171;
       color: #fff;
-      padding: 5px 14px;
+      padding: 6px 18px;
       border: none;
-      border-radius: 5px;
-      margin-top: 5px;
-      margin-left: 2px;
+      border-radius: 6px;
+      font-size: 1.07em;
       cursor: pointer;
-      font-size: 0.95em;
-      transition: background 0.2s;
+      transition: background 0.16s;
+      font-weight: 600;
     }
     .delete-btn:hover { background: #dc2626; }
-    #download-btn { margin: 12px 0 0 0; display: block; }
-    @media (max-width: 900px) { .map-area { flex-direction: column; gap: 10px; } }
+    @media (max-width: 1000px) {
+      .map-area { flex-direction: column; gap: 22px; }
+      .controls-area { max-width: none; }
+      .svg-container { min-width: 0; }
+      #perceptual-map { max-width: 100%; }
+    }
+    @media (max-width: 600px) {
+      .container { padding: 0.4em; border-radius: 0; }
+      .inputs-row, .add-row { flex-direction: column; gap: 8px; }
+      .map-area { gap: 10px; }
+      .market-share-summary { padding: 10px 0; }
+      .svg-container { min-width: 0; }
+    }
   </style>
 </head>
 <body>
 <div class="container">
   <h2>Perceptual Map Tool</h2>
-  <div>
-    <label for="x-axis">Horizontal Axis Label:</label>
-    <input id="x-axis" type="text" value="Price">
-    <label for="y-axis">Vertical Axis Label:</label>
-    <input id="y-axis" type="text" value="Quality">
+  <button class="instructions-btn" id="instructions-toggle" type="button">Show Instructions</button>
+  <div class="inputs-row">
+    <input id="chart-title" type="text" placeholder="Chart Title" autocomplete="off">
+    <input id="x-axis" type="text" placeholder="Horizontal Axis Label" autocomplete="off">
+    <input id="y-axis" type="text" placeholder="Vertical Axis Label" autocomplete="off">
   </div>
-  <form id="brand-form" autocomplete="off" style="margin-top:18px; display:flex; gap:12px; flex-wrap: wrap;">
-    <input id="brand-name" type="text" placeholder="Name" style="flex:1; min-width: 110px;">
-    <input id="brand-x" type="number" min="0" max="100" value="50" style="width:60px;">
-    <input id="brand-y" type="number" min="0" max="100" value="50" style="width:60px;">
-    <input id="brand-color" type="color" value="#2563eb" style="width:44px; padding:0;">
-    <button type="submit">Add Point</button>
+  <form id="brand-form" autocomplete="off" class="add-row">
+    <input id="brand-name" type="text" placeholder="Name" autocomplete="off">
+    <input id="brand-color" type="color" value="#2563eb">
+    <button type="submit">+ Add Point</button>
   </form>
-  <button id="download-btn">Download Chart</button>
   <div class="map-area">
     <div class="svg-container">
-      <!-- Updated width/height and style for retina resolution -->
-      <canvas id="perceptual-map" width="840" height="840" style="width:420px; height:420px; display:block; background:#f1f5f9; border: 2px solid #000; border-radius: 10px;"></canvas>
+      <canvas id="perceptual-map" width="840" height="840"></canvas>
+      <button id="download-btn">Download Chart</button>
     </div>
-    <div class="controls" id="brand-controls">
-      <p style="color:#7e7e7e;">Add a point to get started!</p>
+    <div class="controls-area">
+      <div class="market-share-summary" id="market-share-summary">Total Market Share: 0%</div>
+      <div class="controls" id="brand-controls"></div>
     </div>
   </div>
 </div>
-<footer style="
-  margin-top: 36px;
-  text-align: center;
-  color: #6c757d;
-  font-size: 1.05em;
-  letter-spacing: 1px;
-  padding-bottom: 14px;
-  ">
+<footer style="margin-top: 36px; text-align: center; color: #6c757d; font-size: 1.05em; letter-spacing: 1px; padding-bottom: 14px;">
   Matthew Boyko - 2025
 </footer>
 <script>
 const brands = [];
+const collapsed = [];
 const CANVAS_SIZE = 320, margin = 60;
 const canvas = document.getElementById('perceptual-map');
 const ctx = canvas.getContext('2d');
-// Retina scaling for higher resolution
 ctx.setTransform(2, 0, 0, 2, 0, 0);
 
 const controls = document.getElementById('brand-controls');
+const summary = document.getElementById('market-share-summary');
 
-function renderMap() {
-  const xLabel = document.getElementById('x-axis').value;
-  const yLabel = document.getElementById('y-axis').value;
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+// ---- Brand Control Rendering ----
 
-  // Draw background
-  ctx.fillStyle = '#f1f5f9';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  // Draw border
-  ctx.strokeStyle = "#000";
-  ctx.lineWidth = 2.5;
-  ctx.strokeRect(margin, margin, CANVAS_SIZE, CANVAS_SIZE);
-
-  // Draw X and Y axes (black, thick)
-  ctx.strokeStyle = "#000";
-  ctx.lineWidth = 2.8;
-  // Y axis (vertical)
-  ctx.beginPath();
-  ctx.moveTo(margin, margin);
-  ctx.lineTo(margin, margin + CANVAS_SIZE);
-  ctx.stroke();
-  // X axis (horizontal)
-  ctx.beginPath();
-  ctx.moveTo(margin, margin + CANVAS_SIZE);
-  ctx.lineTo(margin + CANVAS_SIZE, margin + CANVAS_SIZE);
-  ctx.stroke();
-
-  // Quadrant lines (dashed, gray, centered)
-  ctx.save();
-  ctx.setLineDash([7,5]);
-  ctx.strokeStyle = "#888";
-  ctx.lineWidth = 1.5;
-  // Vertical (center)
-  ctx.beginPath();
-  ctx.moveTo(margin + CANVAS_SIZE/2, margin);
-  ctx.lineTo(margin + CANVAS_SIZE/2, margin + CANVAS_SIZE);
-  ctx.stroke();
-  // Horizontal (center)
-  ctx.beginPath();
-  ctx.moveTo(margin, margin + CANVAS_SIZE/2);
-  ctx.lineTo(margin + CANVAS_SIZE, margin + CANVAS_SIZE/2);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
-
-  // Low/High indicators INSIDE chart corners
-  ctx.font = "14px sans-serif";
-  ctx.fillStyle = "#000";
-  // X-axis Low/High
-  ctx.textAlign = "left";
-  ctx.fillText("Low", margin + 4, margin + CANVAS_SIZE + 28);
-  ctx.textAlign = "right";
-  ctx.fillText("High", margin + CANVAS_SIZE - 4, margin + CANVAS_SIZE + 28);
-  // Y-axis Low/High
-  ctx.textAlign = "center";
-  ctx.fillText("Low", margin - 30, margin + CANVAS_SIZE - 8);
-  ctx.fillText("High", margin - 28, margin + 18);
-
-  // Axis Labels closer to the chart, right beside axes
-  ctx.font = "bold 20px sans-serif";
-  ctx.textAlign = "center";
-  // X-axis label
-  ctx.fillText(xLabel, margin + CANVAS_SIZE/2, margin + CANVAS_SIZE + 30);
-  // Y-axis label (rotated)
-  ctx.save();
-  ctx.translate(margin - 25, margin + CANVAS_SIZE/2);
-  ctx.rotate(-Math.PI/2);
-  ctx.textAlign = "center";
-  ctx.font = "bold 20px sans-serif";
-  ctx.fillText(yLabel, 0, 0);
-  ctx.restore();
-
-  // Draw brands
-  brands.forEach(brand => {
-    // X: 0=left, 100=right. Y: 0=bottom, 100=top
-    const cx = margin + (brand.x/100) * CANVAS_SIZE;
-    const cy = margin + CANVAS_SIZE - (brand.y/100) * CANVAS_SIZE;
-    // Dot
-    ctx.beginPath();
-    ctx.arc(cx, cy, 13, 0, 2*Math.PI);
-    ctx.fillStyle = brand.color || "#2563eb";
-    ctx.globalAlpha = 0.85;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "#fff";
-    ctx.stroke();
-    // Brand Name
-    ctx.font = "bold 13px sans-serif";
-    ctx.fillStyle = "#222";
-    ctx.textAlign = "center";
-    ctx.fillText(brand.name, cx, cy-18);
-  });
+function sumMarketShare() {
+  return brands.reduce((acc, b) => acc + (b.share || 20), 0);
 }
 
 function renderControls() {
+  // Update total market share label
+  summary.textContent = `Total Market Share: ${sumMarketShare()}%`;
   if (brands.length === 0) {
-    controls.innerHTML = '<p style="color:#7e7e7e;">Add a point to get started!</p>';
+    controls.innerHTML = '';
     return;
   }
-  controls.innerHTML = '';
+  const ul = document.createElement('ul');
+  ul.className = 'brand-controls-list';
   brands.forEach((brand, i) => {
-    const brandBox = document.createElement('div');
-    brandBox.className = 'brand-box';
-    brandBox.innerHTML = `
-      <div style="font-weight:600; font-size:1em; margin-bottom:2px;">
-        <span style="display:inline-block;width:14px;height:14px;vertical-align:middle;background:${brand.color};border-radius:3px;margin-right:7px;border:1.5px solid #bbb;"></span>
-        ${brand.name}
+    const li = document.createElement('li');
+    li.className = 'brand-control';
+    // Collapsed row
+    li.innerHTML = `
+      <div style="display:flex;align-items:stretch;">
+        <div class="brand-color-bar" style="--color: ${brand.color};"></div>
+        <div style="flex:1;display:flex;flex-direction:column;">
+          <div class="brand-summary" style="background: none;">
+            <div class="brand-title-coords">
+              <span class="brand-name" title="${brand.name}">${brand.name}</span>
+              <span class="brand-coords-share">(${brand.x}, ${brand.y})&nbsp;${brand.share || 20}%</span>
+            </div>
+            <span class="brand-collapse${collapsed[i] ? ' collapsed' : ''}">${collapsed[i] ? '+' : '−'}</span>
+          </div>
+          <div class="brand-details" style="display:${collapsed[i] ? 'none' : 'block'}">
+            <label class="slider-label">X
+              <div class="slider-row">
+                <input type="range" min="0" max="100" value="${brand.x}" data-i="${i}" data-field="x" class="slider-x">
+                <span class="slider-value" id="label-x-${i}">${brand.x}</span>
+              </div>
+            </label>
+            <label class="slider-label">Y
+              <div class="slider-row">
+                <input type="range" min="0" max="100" value="${brand.y}" data-i="${i}" data-field="y" class="slider-y">
+                <span class="slider-value" id="label-y-${i}">${brand.y}</span>
+              </div>
+            </label>
+            <label class="slider-label">Market Share
+              <div class="slider-row">
+                <input type="range" min="1" max="100" value="${brand.share || 20}" data-i="${i}" data-field="share" class="slider-share">
+                <span class="slider-value" id="label-share-${i}">${brand.share || 20}%</span>
+              </div>
+            </label>
+            <button class="delete-btn" data-i="${i}">Delete</button>
+          </div>
+        </div>
       </div>
-      <label style="font-size:0.95em;">${document.getElementById('x-axis').value}: <span id="label-x-${i}">${brand.x}</span></label>
-      <input type="range" min="0" max="100" value="${brand.x}" data-i="${i}" data-field="x">
-      <label style="font-size:0.95em;">${document.getElementById('y-axis').value}: <span id="label-y-${i}">${brand.y}</span></label>
-      <input type="range" min="0" max="100" value="${brand.y}" data-i="${i}" data-field="y">
-      <button class="delete-btn" data-i="${i}">Delete</button>
     `;
-    // Slider events
-    brandBox.querySelectorAll('input[type="range"]').forEach(slider => {
+    li.querySelector('.brand-summary').onclick = () => {
+      collapsed[i] = !collapsed[i];
+      renderControls();
+    };
+    // Make sliders work as sliders
+    li.querySelectorAll('input[type="range"]').forEach(slider => {
       slider.oninput = (e) => {
         const idx = +e.target.dataset.i;
         const field = e.target.dataset.field;
-        brands[idx][field] = +e.target.value;
-        document.getElementById(`label-${field}-${i}`).textContent = e.target.value;
-        renderMap();
+        let value = +e.target.value;
+
+        if (field === "share") {
+          // Calculate available market share, excluding this brand's current share
+          const available = 100 - (sumMarketShare() - (brands[idx].share || 20));
+          if (value > available) value = available;
+          if (value < 0) value = 0;
+          e.target.value = value;
+          brands[idx].share = value;
+          // Live update label
+          document.getElementById(`label-share-${i}`).textContent = `${value}%`;
+          summary.textContent = `Total Market Share: ${sumMarketShare()}%`;
+        } else {
+          brands[idx][field] = value;
+          document.getElementById(`label-${field}-${i}`).textContent = value;
+        }
+        renderMap(); // Dot size updates instantly
       };
+      slider.onchange = () => { renderControls(); };
     });
-    // Delete event
-    brandBox.querySelector('.delete-btn').onclick = (e) => {
+    li.querySelector('.delete-btn').onclick = (e) => {
       const idx = +e.target.dataset.i;
       brands.splice(idx, 1);
+      collapsed.splice(idx, 1);
       renderMap(); renderControls();
     };
-    controls.appendChild(brandBox);
+    ul.appendChild(li);
   });
+  controls.innerHTML = '';
+  controls.appendChild(ul);
 }
 
 document.getElementById('brand-form').onsubmit = (e) => {
   e.preventDefault();
   const name = document.getElementById('brand-name').value.trim();
-  const x = Math.max(0, Math.min(100, +document.getElementById('brand-x').value));
-  const y = Math.max(0, Math.min(100, +document.getElementById('brand-y').value));
   const color = document.getElementById('brand-color').value || "#2563eb";
   if (!name) return;
-  brands.push({ name, x, y, color });
+  const available = 100 - sumMarketShare();
+  if (available <= 0) return;
+  brands.push({ name, x: 50, y: 50, color, share: Math.min(20, available) });
+  collapsed.push(true);
   document.getElementById('brand-name').value = '';
-  document.getElementById('brand-x').value = 50;
-  document.getElementById('brand-y').value = 50;
   document.getElementById('brand-color').value = "#2563eb";
   renderMap(); renderControls();
 };
-document.getElementById('x-axis').oninput = () => { renderMap(); renderControls(); };
-document.getElementById('y-axis').oninput = () => { renderMap(); renderControls(); };
+document.getElementById('x-axis').oninput = () => { renderMap(); };
+document.getElementById('y-axis').oninput = () => { renderMap(); };
+document.getElementById('chart-title').oninput = () => { renderMap(); };
 
 // Download button logic
 document.getElementById('download-btn').onclick = () => {
@@ -253,9 +436,166 @@ document.getElementById('download-btn').onclick = () => {
   link.click();
 };
 
-// Initial render
+// --- Chart Rendering ---
+function renderMap() {
+  const xLabel = document.getElementById('x-axis').value;
+  const yLabel = document.getElementById('y-axis').value;
+  const chartTitle = document.getElementById('chart-title').value.trim();
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle = '#f1f5f9';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(margin, margin, CANVAS_SIZE, CANVAS_SIZE);
+
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2.8;
+  ctx.beginPath();
+  ctx.moveTo(margin, margin);
+  ctx.lineTo(margin, margin + CANVAS_SIZE);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(margin, margin + CANVAS_SIZE);
+  ctx.lineTo(margin + CANVAS_SIZE, margin + CANVAS_SIZE);
+  ctx.stroke();
+
+  ctx.save();
+  ctx.setLineDash([7,5]);
+  ctx.strokeStyle = "#888";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(margin + CANVAS_SIZE/2, margin);
+  ctx.lineTo(margin + CANVAS_SIZE/2, margin + CANVAS_SIZE);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(margin, margin + CANVAS_SIZE/2);
+  ctx.lineTo(margin + CANVAS_SIZE, margin + CANVAS_SIZE/2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  ctx.font = "14px sans-serif";
+  ctx.fillStyle = "#000";
+  ctx.textAlign = "left";
+  ctx.fillText("Low", margin + 4, margin + CANVAS_SIZE + 28);
+  ctx.textAlign = "right";
+  ctx.fillText("High", margin + CANVAS_SIZE - 4, margin + CANVAS_SIZE + 28);
+  ctx.textAlign = "center";
+  ctx.fillText("Low", margin - 30, margin + CANVAS_SIZE - 8);
+  ctx.fillText("High", margin - 28, margin + 18);
+
+  // Draw Chart Title
+  let titleFontSize = 30;
+  ctx.font = `bold ${titleFontSize}px sans-serif`;
+  let titleWidth = ctx.measureText(chartTitle).width;
+  const maxTitleWidth = CANVAS_SIZE + margin*2 - 36;
+  while (titleWidth > maxTitleWidth && titleFontSize > 14) {
+    titleFontSize -= 1;
+    ctx.font = `bold ${titleFontSize}px sans-serif`;
+    titleWidth = ctx.measureText(chartTitle).width;
+  }
+  ctx.fillStyle = "#191919";
+  ctx.textAlign = "center";
+  ctx.font = `bold ${titleFontSize}px sans-serif`;
+  ctx.fillText(chartTitle, margin + CANVAS_SIZE/2, margin - 38);
+
+  // X axis label shrink to fit
+  let xFontSize = 20;
+  ctx.font = `bold ${xFontSize}px sans-serif`;
+  let xLabelWidth = ctx.measureText(xLabel).width;
+  const maxXLabelWidth = CANVAS_SIZE - 84;
+  while (xLabelWidth > maxXLabelWidth && xFontSize > 10) {
+    xFontSize -= 1;
+    ctx.font = `bold ${xFontSize}px sans-serif`;
+    xLabelWidth = ctx.measureText(xLabel).width;
+  }
+  ctx.textAlign = "center";
+  ctx.font = `bold ${xFontSize}px sans-serif`;
+  ctx.fillText(xLabel, margin + CANVAS_SIZE/2, margin + CANVAS_SIZE + 30);
+
+  // Y axis label
+  let yFontSize = 20;
+  ctx.font = `bold ${yFontSize}px sans-serif`;
+  let yLabelWidth = ctx.measureText(yLabel).width;
+  const maxYLabelWidth = CANVAS_SIZE - 84;
+  while (yLabelWidth > maxYLabelWidth && yFontSize > 10) {
+    yFontSize -= 1;
+    ctx.font = `bold ${yFontSize}px sans-serif`;
+    yLabelWidth = ctx.measureText(yLabel).width;
+  }
+  ctx.save();
+  ctx.translate(margin - 25, margin + CANVAS_SIZE/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign = "center";
+  ctx.font = `bold ${yFontSize}px sans-serif`;
+  ctx.fillText(yLabel, 0, 0);
+  ctx.restore();
+
+  // Draw brands (scaling by market share)
+  brands.forEach((brand, i) => {
+    const cx = margin + (brand.x/100) * CANVAS_SIZE;
+    const cy = margin + CANVAS_SIZE - (brand.y/100) * CANVAS_SIZE;
+    const radius = 13 + 24*(Math.max(brand.share || 20, 8)/100); // radius scales with market share, min size
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, 2*Math.PI);
+    ctx.fillStyle = brand.color || "#2563eb";
+    ctx.globalAlpha = 0.85;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#fff";
+    ctx.stroke();
+    // Brand name above the circle, centered
+    ctx.font = "bold 13px sans-serif";
+    ctx.fillStyle = "#222";
+    ctx.textAlign = "center";
+    ctx.fillText(brand.name, cx, cy - radius - 10);
+  });
+}
+
 renderMap();
 renderControls();
+// INSTRUCTION TOGGLE (ADD THIS TO THE BOTTOM OF YOUR SCRIPT)
+const instructionBtn = document.getElementById('instructions-toggle');
+
+// Create instruction box if it doesn't exist
+if (!document.getElementById('instructions-box')) {
+  const box = document.createElement('div');
+  box.id = 'instructions-box';
+  box.style.display = 'none';
+  box.style.background = '#eef2ff';
+  box.style.border = '1.5px solid #2563eb';
+  box.style.borderRadius = '10px';
+  box.style.padding = '18px 24px 12px 24px';
+  box.style.margin = '0 0 22px 0';
+  box.style.fontSize = '1.05em';
+  box.style.color = '#273046';
+  box.style.lineHeight = '1.55';
+  box.innerHTML = `
+    <b>How to use:</b><br>
+    1. Enter a chart title and axis labels.<br>
+    2. Add points with names, colours, and market share.<br>
+    3. Move points and adjust shares with sliders.<br>
+    4. Download your map when ready.<br>
+    <span style="font-size:0.97em;">Tip: Total market share cannot exceed 100%.</span>
+  `;
+  document.querySelector('.container').insertBefore(box, document.querySelector('.inputs-row'));
+}
+
+const instructionsBox = document.getElementById('instructions-box');
+
+instructionBtn.addEventListener('click', () => {
+  if (instructionsBox.style.display === 'none') {
+    instructionsBox.style.display = 'block';
+    instructionBtn.textContent = 'Hide Instructions';
+  } else {
+    instructionsBox.style.display = 'none';
+    instructionBtn.textContent = 'Show Instructions';
+  }
+});
+
 </script>
 </body>
 </html>
