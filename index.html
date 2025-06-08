@@ -490,7 +490,7 @@ function renderMap() {
   let titleFontSize = 30;
   ctx.font = `bold ${titleFontSize}px sans-serif`;
   let titleWidth = ctx.measureText(chartTitle).width;
-  const maxTitleWidth = CANVAS_SIZE + margin*2 - 36;
+  const maxTitleWidth = CANVAS_SIZE;
   while (titleWidth > maxTitleWidth && titleFontSize > 14) {
     titleFontSize -= 1;
     ctx.font = `bold ${titleFontSize}px sans-serif`;
@@ -499,7 +499,7 @@ function renderMap() {
   ctx.fillStyle = "#191919";
   ctx.textAlign = "center";
   ctx.font = `bold ${titleFontSize}px sans-serif`;
-  ctx.fillText(chartTitle, margin + CANVAS_SIZE/2, margin - 38);
+  ctx.fillText(chartTitle, margin + CANVAS_SIZE/2, margin - 20);
 
   // X axis label shrink to fit
   let xFontSize = 20;
